@@ -1,1 +1,546 @@
-Hello World
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>用户中心</title>
+	<link rel="stylesheet" type="text/css" href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css">
+	
+	<style type="text/css">
+		
+		body {
+			/*background-color: #F0F0F2;*/
+			/*font-family: '微软雅黑';*/
+			font: 14px/1.5 "Helvetica Neue",Helvetica,Arial,"Microsoft Yahei","Hiragino Sans GB","Heiti SC","WenQuanYi Micro Hei",sans-serif;
+			color: #fff;
+		  	background-color: #159957;
+            background-image: linear-gradient(90deg, #155799, #159957);
+		}
+
+		.container-fluid {
+			/*background-color: #0ADC0A;*/
+			/*background-color: #159957;*/
+			/*text-align: center;*/
+			height: 100%;
+			min-width: 320px;
+		}
+
+		.icon-text-btn{
+			text-align: center;
+			/*background-color: #0E25F0;*/
+			padding-top: 20px;
+			padding-bottom: 20px;
+		}
+		
+		.icon-text-btn a, .icon-text-btn a:focus, .icon-text-btn a:hover {
+			text-decoration:none;
+			color: #000;
+		}
+
+		.icon-text-btn>a>span.glyphicon{
+			font-size: 30px;
+			width: 60px;
+			height: 60px;
+			border-radius: 30px;
+			border: 1px solid rgba(255,255, 255, 0.2);
+			display: inline-block; 
+			color: rgba(255,255,255,0.7);
+			background-color: rgba(255,255,255,0.08);
+			padding-top: 15px;
+			margin-bottom: 5px;
+			transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+		}
+
+		.icon-text-btn>a>span.glyphicon:hover{
+			color: rgba(255, 255, 255, 0.8);
+			text-decoration: none;
+			background-color: rgba(255, 255, 255, 0.2);
+			border-color: rgba(255, 255, 255, 0.3);
+		}
+
+		.icon-text-btn>a>span.icon-text{
+			color: rgb(255,255,255);
+		}
+
+		.search-name{
+			position: relative;
+			width: 100%;
+		}
+
+		ul.user-list {
+			width: 100%;
+			display: none;
+			position: absolute;
+			top:34px;
+			left: 0;
+		}
+
+		ul.user-list li {
+			padding-left: 10px;
+			padding-top: 5px;
+			padding-bottom: 5px;
+			color: #000;
+			font-size: 18px;
+			background-color: #FFF;
+		}
+
+		ul.user-list li.checked {
+			background-color: #B2ACAC;
+		}
+
+		/*ul.user-list li:first-child {
+			padding-left: 10px;
+			padding-top: 5px;
+			color: #000;
+			font-size: 18px;
+		}
+
+		ul.user-list li:last-child {
+			padding-left: 10px;
+			padding-bottom: 5px;
+			color: #000;
+			font-size: 18px;
+		}*/
+
+		.location-info{
+			padding-top: 10px;
+			padding-bottom: 10px;
+			display: none;
+		}
+
+		.baidu-map{
+			height: 200px;
+			width: 100%;
+		}
+		
+		.dialog {
+			width: 100%;
+			height: 100%;
+			position: fixed;
+			top: 0;
+			left: 0;
+			/*z-index: -1000;*/
+			display: none;
+			color: #000;
+		}
+
+		.base{
+			width: 100%;
+			height: 100%;
+			opacity: 0.5;
+			background-color: #000;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+
+		.dialog-messagebox{
+			background-color: #fff;
+			position: absolute;
+			border-radius: 10px;
+		}
+
+		.dialog-messagebox .dialog-title {
+			font-size: 15px;
+			font-weight: bold;
+			padding-top:10px;
+			padding-bottom:10px;
+		}
+
+		.dialog-messagebox .dialog-message {
+			font-size: 14px;
+			padding-left: 10px;
+			padding-right: 10px;
+			padding-top: 5px;
+			padding-bottom: 5px;
+			border-top: 1px solid #AEABAB;
+			border-bottom: 1px solid #AEABAB;
+			overflow-y: overlay;	
+		}
+		
+		.dialog-messagebox .dialog-btns {
+			padding-top: 10px;
+			padding-bottom: 10px;
+		}
+
+		.dialog-messagebox .dialog-btns:hover {
+			/*background-color: #000;*/
+		}
+
+		.refresh{
+			height: 40px;
+			margin-top: -40px;
+			background-color: #fff;
+			color: #000;
+		}
+
+	</style>
+	<script type="text/javascript">
+		var cssElem = document.createElement('style');
+		document.documentElement.firstElementChild.appendChild(cssElem);
+		function setPxPerRem(){
+			var dpr = 1;
+			//var pxPerRem = document.body.clientWidth * dpr /10; //有Bug body还没有
+			var pxPerRem = document.documentElement.clientWidth * dpr /10;
+			// console.log(document.documentElement.clientWidth, pxPerRem);
+			cssElem.innerHTML = `html{font-size:${pxPerRem}px !important;}`
+		} 
+		//setPxPerRem();
+	</script>
+	
+</head>
+<body>
+
+	<!-- <div class="refresh text-center" id="refresh">
+		<span>松手即可刷新</span>
+	</div> -->
+
+	<div class="container-fluid">
+		<header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
+  
+		<div class="row">
+		  <div class="col-xs-4 col-md-4">
+		  	<div class="icon-text-btn">
+		  		<a href="">
+		  			<span class="glyphicon glyphicon-user" aria-hidden="true"></span><br>
+		  			<span class="icon-text">转型服务</span>
+		  		</a>
+		  	</div>
+		  </div>
+		  <div class="col-xs-4 col-md-4"> 
+		  	<div class="icon-text-btn">
+		  		<a href="">
+		  			<span class="glyphicon glyphicon-heart" aria-hidden="true"></span><br>
+		  			<span class="icon-text">案例展示</span>
+		  		</a>
+		  	</div>
+		  </div>
+		  <div class="col-xs-4 col-md-4">
+		  	<div class="icon-text-btn">
+		  		<a>
+		  			<span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><br>
+		  			<span class="icon-text">地理位置</span>
+		  		</a>
+		  	</div>
+		  </div>
+		</div>
+		
+		<div class="search-name">
+			<input id="search-name-input" type="text" class="form-control search-name-input" placeholder="搜索用户">
+
+			<ul id = "user-list" class="user-list list-unstyled">
+			</ul>
+		</div>
+
+		<div class="location-info" id="location-info">
+			
+		</div>
+
+		<div id="baidu-map" class="baidu-map"></div>
+
+	</div>
+
+	<div class="dialog" id="dialog">
+		<div class="base"></div>
+		<div class="dialog-messagebox text-center" id="dialog-messagebox">
+			<div class="dialog-title" id="dialog-title">
+				定位服务未开启
+			</div>
+
+			<div class="dialog-message text-left" id="dialog-message">
+				androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程androidpn服务器端是java语言实现的，基于openfire开源工程
+			</div>
+
+			<div class="dialog-btns" id="dialog-btns">
+				<a>取消</a>
+			</div>
+		</div>
+	</div>
+
+	
+	<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.8.3/jquery.min.js"></script>
+	<!-- <script src="js/location.js"></script> -->
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dnMFgcYo7IctNunAu17fusZSFDMtwLPE"></script>
+
+	<script type="text/javascript">
+
+		$(function(){
+
+			var Dialog = {
+				init: function(){
+					//var html = 
+					
+					$("#dialog-btns").on('click',function(){
+						Dialog.hide();
+					});
+
+					/*$("#dialog-message").on('touchmove', function(erent){
+						//event.preventDefault()
+						event.stopPropagation();
+					});
+
+					$("#dialog").on('touchmove', function(erent){
+						event.preventDefault();
+					});*/
+					this.setPositionX();
+				},
+
+				setPositionX:function(){
+
+					var width = $(window).width();
+					
+					// alert(width);
+					$("#dialog-messagebox").css({
+						width: "300px",
+						left: (width - 300) / 2 + 'px', 
+					});
+				},
+
+				setPositionY:function(){
+					var height = $(window).height();
+
+					$("#dialog-message").css('max-height',(height - 90) + 'px');
+					$("#dialog-messagebox").css({
+						top: (height - $("#dialog-messagebox").height()) / 2 + 'px', 
+					});
+				},
+
+				title: function(title){
+					this.title = title;
+				},
+
+				show:function(){
+					$("#dialog").show();
+					this.setPositionY();
+					
+				},
+
+				hide:function(){
+					$("#dialog").hide();
+				}
+			};
+
+			Dialog.init();
+
+			//判断手机横竖屏状态： 
+			function hengshuping() {
+				Dialog.setPositionX();
+				Dialog.setPositionY();
+			}
+			window.addEventListener("resize", hengshuping, false)
+
+			// var startY = 0, lastMoveY;
+			
+			// document.querySelector("body").addEventListener("touchstart", function(e){
+			//  	console.log("touchstart");
+			//  	if(1 === e.targetTouches.length){
+			// 		startY = e.targetTouches[0].pageY;
+			// 		lastMoveY = startY;
+			// 	}
+			// });
+
+			// document.querySelector("body").addEventListener("touchmove", function(e){
+			//  	if (1 === e.targetTouches.length) {
+			// 		var y = e.targetTouches[0].pageY;
+
+			// 		var offset = y - lastMoveY;
+			// 		lastMoveY = y;
+			// 		$("#refresh").css("margin-top", parseInt($("#refresh").css("margin-top")) + offset);
+			// 	}
+			// });
+
+			// document.querySelector("body").addEventListener("touchend", function(e){
+			// 	$("#refresh").animate({"margin-top": "-40px"}, 1000);
+			// });
+
+	
+			/*$('.item').click(function(event) {
+				console.log(this.style.backgroundColor);
+				if(this.style.backgroundColor != '#2014DE'){
+					this.style.backgroundColor = '#2014DE';
+				}else{
+					this.style.backgroundColor = '#DE0A0A';
+				}
+
+				console.log($(this).offset().top);
+			});*/
+			//$('.item').hide();
+
+			/*$('.item').each(function(){
+				console.log($(this).offset().top);
+			});
+
+			$('.item').hover(function() {
+				
+			}, function() {
+				
+				$(this).hide();
+			});*/
+
+			/*$('.header').hover(function(e) {
+				
+				//var $item = $("#item").show();
+
+				var $this = $(this), offset = $(this).offset(); 
+
+				$("#item").css({
+					top: e.clientY - offset.top,
+					left: e.clientX - offset.left,
+				});
+				var itemW = $("#item").width();
+				var itemH = $("#item").height();
+
+				if(e.clientX - offset.left + itemW >= $this.width()){
+					$("#item").css({
+						left: e.clientX - offset.left - itemW,
+					});
+				}
+
+				if(e.clientY - offset.top + itemH >= $this.height()){
+					$("#item").css({
+						left: e.clientY - offset.top - itemH,
+					});
+				}
+
+			},function(){
+				//$("#item").hide()
+			})*/
+		
+			$("#search-name-input").on('input', function(event) {
+				/* Act on the event */
+				var $userList = $('#user-list');
+				var $this = $(this);
+				var inputSearchValue = $this.val();
+				$this.data('init_value', inputSearchValue);
+				if(inputSearchValue && inputSearchValue.trim()){
+					$.post('/service', {
+						"method.name": "mash5.user.searchUsers",
+						"search.name": inputSearchValue,
+					}, function(data, textStatus, xhr) {
+						var matchValue = $this.val();
+						if(!matchValue && !matchValue.trim()){
+							return;
+						}
+						data = JSON.parse(data);
+						var users = data.object.users;
+						$userList.get(0).innerHTML = '';
+						if(Array.isArray(users) && users.length > 0){
+							users.forEach(function(user, index){
+								/*$userList.get(0).innerHTML += `<li id=li-user-${index} mouseover='onMouseover'>${name}</li>`;*/
+
+								$li = $('<li>').attr('id', 'li-user-' + index).text(user.name + '  (' + (user.email|| user.telphone || '暂无联系方式') +')').data('user_name', user.name).hover(function() {
+									/* Stuff to do when the mouse enters the element */
+									$(this).addClass('checked');
+								}, function() {
+									/* Stuff to do when the mouse leaves the element */
+									$(this).removeClass('checked');
+								}).click(function(event) {
+									/* Act on the event */
+									$this.val($(this).data('user_name'));
+									$userList.hide();
+								});
+								$userList.append($li);
+							});
+						}else{
+							$userList.get(0).innerHTML += `<li>没有匹配用户</li>`;
+						}
+						
+						$userList.show();
+					});
+				}else{
+					$userList.hide();
+				}
+			});
+
+
+			$("#search-name-input").focusin(function(event) {
+				/* Act on the event */
+				$(this).trigger('input');
+			}).focusout(function(event) {
+				/* Act on the event */
+				/*var $userList = $('#user-list');
+				if (!$userList.is(':hidden')) {
+					$userList.hide();
+				}*/
+			});
+
+
+
+			$('body').on('keydown', function(event) {
+				var $userList = $('#user-list');
+				var $searchName = $("#search-name-input");
+
+				var inputSearchValue = $searchName.data('init_value');
+				if (!$userList.is(':hidden')) {
+					if ((event.keyCode === 38 || event.keyCode === 40)) {
+						/*if ($searchName.is(':focus')) {
+							$searchName.blur();
+						}*/
+
+						var items = $userList.find('li');
+
+						var currentIndex = -1;
+						var currentChecked = items.filter('.checked');
+
+						/*if (currentChecked.length <= 0) {
+							currentChecked = $userList.find('li:hover');
+						}*/
+
+						if (currentChecked.length > 0) {
+							currentIndex = currentChecked.attr('id');
+							if (currentIndex) {
+								currentIndex = currentIndex.substring(currentIndex.lastIndexOf('-') + 1, currentIndex.length);
+							}
+						} else {
+							currentIndex = -1;
+							currentChecked = undefined;
+						}
+						currentIndex = ~~currentIndex;
+
+						currentChecked && currentChecked.removeClass('checked');
+						var nextIndex = 0;
+
+						switch (event.keyCode) {
+							case 38:
+								if(currentIndex > -1){
+									nextIndex = currentIndex - 1;
+								}else{
+									nextIndex = items.length - 1;
+								}
+								console.log(currentIndex, nextIndex);
+								if (nextIndex < 0) {
+									$searchName.focus();
+									$searchName.val(inputSearchValue);
+								} else {
+									currentChecked = $('#user-list').find('li').eq(nextIndex).addClass('checked');
+									$searchName.val(currentChecked.data('user_name'));
+								}
+								break;
+							case 40:
+								nextIndex = currentIndex + 1;
+
+								//console.log(currentIndex,  nextIndex);
+								if (nextIndex > items.length - 1) {
+									$searchName.focus();
+									$searchName.val(inputSearchValue);
+								} else {
+									currentChecked = $('#user-list').find('li').eq(nextIndex).addClass('checked');
+									$searchName.val(currentChecked.data('user_name'));
+								}
+
+								break;
+							default:
+								break;
+						}
+					}else{
+						if (!$userList.is(':focus')) {
+							$userList.hide();
+							$searchName.focus();
+						}
+					}
+				}
+			});
+		});
+	</script>
+</body>
+</html>
